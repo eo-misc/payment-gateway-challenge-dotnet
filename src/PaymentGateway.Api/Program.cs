@@ -12,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
 builder.Services.AddProblemDetails();
+
+builder.Services.AddSingleton(TimeProvider.System);
+
 builder.Services.AddSingleton<IPaymentsRepository,  PaymentsRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentRequestValidator, PaymentRequestValidator>();
