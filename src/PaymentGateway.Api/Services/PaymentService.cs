@@ -129,4 +129,36 @@ public class PaymentService : IPaymentService
             }
         }
     }
+    
+    public RetrieveResult RetrievePayment(Guid id, string merchantId, CancellationToken cancellationToken)
+    {
+        using var activity = ActivitySource.StartActivity("RetrievePayment");
+        activity?.SetTag("payment.id", id);
+        activity?.SetTag("merchant.id", merchantId);
+
+        using (_logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["merchant.id"] = merchantId,
+                   ["payment.id"] = id
+               }))
+        {
+            _logger.LogInformation("Retrieving payment");
+
+            var payment = _paymentsRepository.Get(merchantId, id);
+            if (payment == null)
+            {
+                activity?.SetTag("retrieval.found", false);
+                _logger.LogInformation("Payment not found");
+                return new NotFoundResult("Payment not found");
+            }
+
+            activity?.SetTag("retrieval.found", true);
+            activity?.SetTag("payment.status", payment.Status.ToString());
+
+            _logger.LogInformation("Payment retrieved: Status={Status}", payment.Status);
+
+            var response = payment.ToGetPaymentResponse();
+            return new FoundResult(response);
+        }
+    }
 }

@@ -7,6 +7,8 @@ using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
 
+using NotFoundResult = PaymentGateway.Api.Models.NotFoundResult;
+
 namespace PaymentGateway.Api.Controllers;
 
 [Route("api/[controller]")]
@@ -39,6 +41,26 @@ public class PaymentsController : Controller
             RejectedResult r            => BadRequest(new ValidationProblemDetails(r.Errors)),
             BankUnavailableResult r     => StatusCode(502, new { error = r.Message }),
             _                           => StatusCode(500)
+        };
+    }
+    
+    [HttpGet("{id:guid}")]
+    public ActionResult<GetPaymentResponse?> GetPaymentAsync(
+        Guid id,
+        [FromHeader(Name = "Merchant-Id")] string? merchantId,
+        CancellationToken cancellationToken)
+    {
+        merchantId = NormalizeMerchantId(merchantId);
+        if (merchantId == null)
+            return BadRequest("Invalid or missing Merchant-Id header");
+
+        var result = _paymentService.RetrievePayment(id, merchantId, cancellationToken);
+
+        return result switch
+        {
+            FoundResult r => Ok(r.Payment),
+            NotFoundResult r => NotFound(r.message),
+            _ => StatusCode(500)
         };
     }
     
