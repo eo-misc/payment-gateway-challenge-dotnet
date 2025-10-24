@@ -125,7 +125,6 @@ public class PaymentService : IPaymentService
             activity?.SetTag("payment.status", payment.Status.ToString());
 
             var response = payment.ToPostPaymentResponse();
-            shouldCleanupIdempotency = false;
 
             return payment.Status == PaymentStatus.Authorized
                 ? new AuthorizedResult(response, IsReplay: false)
@@ -135,6 +134,7 @@ public class PaymentService : IPaymentService
         {
             activity?.SetStatus(ActivityStatusCode.Error, "Bank unavailable");
             _logger.LogWarning(ex, "Bank service unavailable after retries");
+            _idempotencyStore.Delete(merchantId, idempotencyKey);
             return new BankUnavailableResult("Bank service unavailable");
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
@@ -147,6 +147,7 @@ public class PaymentService : IPaymentService
         {
             activity?.SetStatus(ActivityStatusCode.Error, "Circuit breaker open");
             _logger.LogWarning("Circuit breaker opened due to bank failures");
+            _idempotencyStore.Delete(merchantId, idempotencyKey);
             return new BankUnavailableResult("Bank timeout");
         }
         catch (Exception ex)
@@ -154,13 +155,6 @@ public class PaymentService : IPaymentService
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             _logger.LogError(ex, "Unexpected error processing payment");
             throw;
-        }
-        finally
-        {
-            if (shouldCleanupIdempotency)
-            {
-                _idempotencyStore.Delete(merchantId, idempotencyKey);
-            }
         }
     }
     
