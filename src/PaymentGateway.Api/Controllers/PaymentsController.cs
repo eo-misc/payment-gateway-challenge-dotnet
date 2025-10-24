@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using PaymentGateway.Api.Helpers;
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
@@ -26,19 +27,26 @@ public class PaymentsController : Controller
     public async Task<ActionResult<PostPaymentResponse>> PostPaymentAsync(
         [FromBody] PostPaymentRequest request,
         [FromHeader(Name = "Merchant-Id")] string? merchantId,
+        [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         CancellationToken cancellationToken)
     {
-        merchantId = NormalizeMerchantId(merchantId);
+        merchantId = StringHelpers.NormalizeMerchantId(merchantId);
         if (merchantId is null)
             return BadRequest("Invalid or missing Merchant-Id header");
         
-        var result = await _paymentService.ProcessPaymentAsync(request, merchantId, cancellationToken);
+        idempotencyKey = StringHelpers.NormalizeIdempotencyKey(idempotencyKey);
+        if (idempotencyKey is null)
+            return BadRequest("Invalid Idempotency-Key header");
+        
+        var result = await _paymentService.ProcessPaymentAsync(request, merchantId, idempotencyKey, cancellationToken);
 
         return result switch
         {
-            AuthorizedResult r => Ok(r.Payment),
-            DeclinedResult  r  => Ok(r.Payment),
+            AuthorizedResult r => OkWithIdemHeaders(r.Payment, idempotencyKey, r.IsReplay),
+            DeclinedResult  r  => OkWithIdemHeaders(r.Payment, idempotencyKey, r.IsReplay),
             RejectedResult r            => BadRequest(new ValidationProblemDetails(r.Errors)),
+            ConflictInProgressResult r  => StatusCode(409, new ProblemDetails { Title = "Conflict", Detail = r.Message, Status = 409 }),
+            ConflictMismatchResult r    => StatusCode(409, new ProblemDetails { Title = "Conflict", Detail = r.Message, Status = 409 }),
             BankUnavailableResult r     => StatusCode(502, new { error = r.Message }),
             _                           => StatusCode(500)
         };
@@ -50,7 +58,7 @@ public class PaymentsController : Controller
         [FromHeader(Name = "Merchant-Id")] string? merchantId,
         CancellationToken cancellationToken)
     {
-        merchantId = NormalizeMerchantId(merchantId);
+        merchantId = StringHelpers.NormalizeMerchantId(merchantId);
         if (merchantId == null)
             return BadRequest("Invalid or missing Merchant-Id header");
 
@@ -64,14 +72,10 @@ public class PaymentsController : Controller
         };
     }
     
-    private static readonly Regex Token = new("^[A-Za-z0-9._-]{1,64}$", RegexOptions.Compiled);
-    
-    private static string? NormalizeMerchantId(string? merchantId)
+    private ActionResult<PostPaymentResponse> OkWithIdemHeaders(PostPaymentResponse body, string key, bool replay)
     {
-        if (string.IsNullOrWhiteSpace(merchantId))
-            return null;
-
-        merchantId = merchantId.Trim();
-        return Token.IsMatch(merchantId) ? merchantId : null;
+        Response.Headers["Idempotency-Key"] = key;
+        if (replay) Response.Headers["Idempotent-Replay"] = "true";
+        return Ok(body);
     }
 }

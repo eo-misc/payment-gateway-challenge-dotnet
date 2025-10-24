@@ -28,7 +28,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -58,7 +58,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -90,7 +90,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -122,7 +122,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -150,7 +150,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -178,7 +178,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -208,7 +208,7 @@ public partial class PaymentsControllerTests
             Cvv = cvv
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -244,7 +244,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -280,7 +280,7 @@ public partial class PaymentsControllerTests
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         

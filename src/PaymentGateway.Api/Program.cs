@@ -16,6 +16,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddSingleton<IPaymentsRepository,  PaymentsRepository>();
+builder.Services.AddSingleton<IIdempotencyStore, IdempotencyStore>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentRequestValidator, PaymentRequestValidator>();
 

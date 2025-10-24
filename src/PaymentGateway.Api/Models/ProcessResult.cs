@@ -12,3 +12,7 @@ public sealed record BankUnavailableResult(string Message) : ProcessResult;
 
 public sealed record RejectedResult(IDictionary<string, string[]> Errors) : ProcessResult;
 
+public sealed record ConflictInProgressResult(string Message, int RetryAfterSeconds) : ProcessResult;
+
+public sealed record ConflictMismatchResult(string Message) : ProcessResult;
+

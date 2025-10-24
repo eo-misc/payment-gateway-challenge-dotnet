@@ -19,12 +19,15 @@ public abstract class ApiTestsBase : IDisposable
         Client = Factory.CreateClient();
     }
 
-    protected HttpClient CreateClient(string merchantId)
+    protected HttpClient CreateClient(string merchantId, string? idempotencyKey = null)
     {
         var client = Factory.CreateClient();
         client.DefaultRequestHeaders.Add("Merchant-Id", merchantId);
+        if (!string.IsNullOrWhiteSpace(idempotencyKey))
+            client.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
         return client;
     }
+
 
     protected void SeedPayment(Payment payment)
     {

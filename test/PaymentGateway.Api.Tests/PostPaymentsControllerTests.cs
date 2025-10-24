@@ -23,7 +23,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
@@ -56,7 +56,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: merchantId);
+        var client = CreateClient(merchantId: merchantId,  idempotencyKey: Guid.NewGuid().ToString());
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
@@ -89,7 +89,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
@@ -120,7 +120,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: merchantId);
+        var client = CreateClient(merchantId: merchantId, idempotencyKey: Guid.NewGuid().ToString());
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
@@ -154,7 +154,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
             Cvv = "123"
         };
 
-        var client = CreateClient(merchantId: "merchant-123");
+        var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
