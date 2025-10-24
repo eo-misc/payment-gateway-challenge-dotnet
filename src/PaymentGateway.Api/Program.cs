@@ -1,3 +1,4 @@
+using PaymentGateway.Api.Middleware;
 using PaymentGateway.Api.Persistence;
 using PaymentGateway.Api.Services;
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
+builder.Services.AddProblemDetails();
 builder.Services.AddSingleton<IPaymentsRepository,  PaymentsRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
@@ -31,6 +33,7 @@ builder.Services.AddHttpClient<IBankClient, BankClient>(client =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

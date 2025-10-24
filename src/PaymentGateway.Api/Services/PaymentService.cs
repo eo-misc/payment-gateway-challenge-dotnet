@@ -6,6 +6,8 @@ using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Persistence;
 
+using Polly.CircuitBreaker;
+
 namespace PaymentGateway.Api.Services;
 
 public class PaymentService : IPaymentService
@@ -90,21 +92,18 @@ public class PaymentService : IPaymentService
 
                 return new BankUnavailableResult("Bank service unavailable");
             }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.BadRequest)
-            {
-                // Bank returned 400 - this shouldn't happen if our validation is correct
-                // Treat as bank error to avoid leaking details
-                activity?.SetTag("bank.bad_request", true);
-                activity?.SetStatus(ActivityStatusCode.Error, "Bank returned 400");
-                _logger.LogError(ex, "Bank unexpectedly returned 400 BadRequest");
-
-                return new BankUnavailableResult("An error occurred");
-            }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
                 activity?.SetStatus(ActivityStatusCode.Error, "Bank timeout");
                 _logger.LogWarning("Bank request timed out");
 
+                return new BankUnavailableResult("Bank timeout");
+            }
+            catch (BrokenCircuitException)
+            {
+                activity?.SetStatus(ActivityStatusCode.Error, "Bank timeout");
+                _logger.LogWarning("Circuit breaker opened");
+                // this could raise a 429 instead
                 return new BankUnavailableResult("Bank timeout");
             }
             catch (Exception ex)

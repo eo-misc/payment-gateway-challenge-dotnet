@@ -139,4 +139,27 @@ public partial class PaymentsControllerTests : ApiTestsBase
         Assert.Equal("GBP", savedPayment.Currency);
         Assert.Equal(100, savedPayment.Amount);
     }
+    
+    [Fact]
+    public async Task Post_GivenValidPaymentAndBankReturns503_ThenReturns502BadGateway()
+    {
+        // Arrange
+        var request = new PostPaymentRequest
+        {
+            CardNumber = "2222405343248880",
+            ExpiryMonth = "04",
+            ExpiryYear = "2025",
+            Currency = "GBP",
+            Amount = 100,
+            Cvv = "123"
+        };
+
+        var client = CreateClient(merchantId: "merchant-123");
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/payments", request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+    }
 }

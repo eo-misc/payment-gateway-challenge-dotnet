@@ -34,6 +34,7 @@ public class PaymentsController : Controller
         {
             AuthorizedResult r => Ok(r.Payment),
             DeclinedResult  r  => Ok(r.Payment),
+            BankUnavailableResult r     => StatusCode(502, new { error = r.Message }),
             _                           => StatusCode(500)
         };
     }
