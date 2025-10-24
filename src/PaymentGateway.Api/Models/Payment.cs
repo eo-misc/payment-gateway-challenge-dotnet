@@ -1,14 +1,15 @@
-﻿using PaymentGateway.Api.Enums;
+using PaymentGateway.Api.Enums;
 
-namespace PaymentGateway.Api.Models.Responses;
+namespace PaymentGateway.Api.Models;
 
-public sealed record PostPaymentResponse
+public class Payment
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
+    public required string MerchantId { get; set; }
     public PaymentStatus Status { get; set; }
     public required string CardNumberLastFour { get; set; }
     public required string ExpiryMonth { get; set; }
     public required string ExpiryYear { get; set; }
     public required string Currency { get; set; }
-    public int Amount { get; set; }
+    public required int Amount { get; set; }
 }
