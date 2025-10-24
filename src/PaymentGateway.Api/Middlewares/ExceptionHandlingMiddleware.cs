@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 
-using Polly.CircuitBreaker;
-
-namespace PaymentGateway.Api.Middleware;
+namespace PaymentGateway.Api.Middlewares;
 
 public class ExceptionHandlingMiddleware : IExceptionHandler
 {

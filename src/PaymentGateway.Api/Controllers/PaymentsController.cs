@@ -1,6 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
 using Microsoft.AspNetCore.Mvc;
+
+using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
@@ -34,6 +36,7 @@ public class PaymentsController : Controller
         {
             AuthorizedResult r => Ok(r.Payment),
             DeclinedResult  r  => Ok(r.Payment),
+            RejectedResult r            => BadRequest(new ValidationProblemDetails(r.Errors)),
             BankUnavailableResult r     => StatusCode(502, new { error = r.Message }),
             _                           => StatusCode(500)
         };

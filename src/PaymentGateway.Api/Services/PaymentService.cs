@@ -16,15 +16,18 @@ public class PaymentService : IPaymentService
 
     private readonly IBankClient _bankClient;
     private readonly IPaymentsRepository _paymentsRepository;
+    private readonly IPaymentRequestValidator _validator;
     private readonly ILogger<PaymentService> _logger;
 
     public PaymentService(
         IBankClient bankClient,
         IPaymentsRepository paymentsRepository,
+        IPaymentRequestValidator validator,
         ILogger<PaymentService> logger)
     {
         _bankClient = bankClient;
         _paymentsRepository = paymentsRepository;
+        _validator = validator;
         _logger = logger;
     }
     
@@ -38,6 +41,16 @@ public class PaymentService : IPaymentService
         activity?.SetTag("payment.amount", request.Amount);
         activity?.SetTag("payment.currency", request.Currency);
         activity?.SetTag("payment.card_last4", request.CardNumber[^4..]);
+        
+        var validationErrors = _validator.Validate(request);
+        if (validationErrors.Count > 0)
+        {
+            using (_logger.BeginScope(new Dictionary<string, object> { ["merchant.id"] = merchantId }))
+                _logger.LogWarning("Validation failed: {Count} errors", validationErrors.Count);
+
+            activity?.SetTag("payment.status", "Rejected");
+            return new RejectedResult(validationErrors);
+        }
         
         var payment = new Payment
         {

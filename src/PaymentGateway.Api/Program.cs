@@ -1,4 +1,4 @@
-using PaymentGateway.Api.Middleware;
+using PaymentGateway.Api.Middlewares;
 using PaymentGateway.Api.Persistence;
 using PaymentGateway.Api.Services;
 
@@ -14,6 +14,7 @@ builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
 builder.Services.AddProblemDetails();
 builder.Services.AddSingleton<IPaymentsRepository,  PaymentsRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPaymentRequestValidator, PaymentRequestValidator>();
 
 builder.Services.AddHttpClient<IBankClient, BankClient>(client =>
 {
@@ -48,4 +49,7 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { }
+namespace PaymentGateway.Api
+{
+    public partial class Program { }
+}
