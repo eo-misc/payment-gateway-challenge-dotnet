@@ -27,7 +27,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -60,7 +60,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // Assert
         Assert.NotNull(paymentResponse);
@@ -92,7 +92,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(paymentResponse);
@@ -124,7 +124,7 @@ public partial class PaymentsControllerTests : ApiTestsBase
 
         // Act
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // Assert
         Assert.NotNull(paymentResponse);

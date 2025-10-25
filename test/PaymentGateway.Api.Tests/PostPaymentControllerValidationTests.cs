@@ -31,7 +31,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -61,7 +61,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -93,7 +93,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -125,7 +125,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -153,7 +153,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -181,7 +181,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -211,7 +211,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
@@ -247,7 +247,7 @@ public partial class PaymentsControllerTests
         var client = CreateClient(merchantId: "merchant-123", idempotencyKey: Guid.NewGuid().ToString());
 
         var response = await client.PostAsJsonAsync("/api/payments", request);
-        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ApiFactory.JsonOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.NotNull(problemDetails);
