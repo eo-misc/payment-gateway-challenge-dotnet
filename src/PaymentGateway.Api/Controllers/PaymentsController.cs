@@ -74,7 +74,6 @@ public class PaymentsController : Controller
     
     private ActionResult<PostPaymentResponse> OkWithIdemHeaders(PostPaymentResponse body, string key, bool replay)
     {
-        Response.Headers["Idempotency-Key"] = key;
         if (replay) Response.Headers["Idempotent-Replay"] = "true";
         return Ok(body);
     }
