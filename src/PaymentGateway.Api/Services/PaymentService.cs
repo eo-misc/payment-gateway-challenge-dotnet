@@ -72,6 +72,7 @@ public class PaymentService : IPaymentService
 
                     activity?.SetTag("payment.id", existing.Id);
                     activity?.SetTag("payment.status", existing.Status.ToString());
+                    activity?.SetTag("payment.idempotencyReplay", true);
 
                     var replayResponse = existing.ToPostPaymentResponse();
                     return existing.Status == PaymentStatus.Authorized
@@ -103,8 +104,7 @@ public class PaymentService : IPaymentService
         };
 
         activity?.SetTag("payment.id", payment.Id);
-
-        var shouldCleanupIdempotency = true;
+        
         try
         {
             var bankRequest = new BankPaymentRequest
@@ -133,7 +133,7 @@ public class PaymentService : IPaymentService
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.ServiceUnavailable)
         {
             activity?.SetStatus(ActivityStatusCode.Error, "Bank unavailable");
-            _logger.LogWarning(ex, "Bank service unavailable after retries");
+            _logger.LogWarning(ex, "Bank service unavailable");
             _idempotencyStore.Delete(merchantId, idempotencyKey);
             return new BankUnavailableResult("Bank service unavailable");
         }
@@ -141,6 +141,7 @@ public class PaymentService : IPaymentService
         {
             activity?.SetStatus(ActivityStatusCode.Error, "Bank timeout");
             _logger.LogWarning("Bank request timed out");
+            _idempotencyStore.Delete(merchantId, idempotencyKey);
             return new BankUnavailableResult("Bank timeout");
         }
         catch (BrokenCircuitException)
