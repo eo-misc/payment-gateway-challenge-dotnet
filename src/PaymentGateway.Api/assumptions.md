@@ -20,3 +20,5 @@ The idempotency mechanism is implemented using in-memory storage for simplicity.
 2. Implementing idempotency keys as unique constraints in a database table, which provides truly atomic idempotent guarantees through database-level conflict detection
 
 The current implementation correctly handles concurrent requests and payload validation, demonstrating the core concepts even though the storage isn't persistent. 
+
+In a production system idempotency keys may have a strongly enforced format but for ease of testing we accept and normalize strings under 64 chars.
