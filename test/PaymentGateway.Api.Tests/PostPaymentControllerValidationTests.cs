@@ -16,6 +16,8 @@ public partial class PaymentsControllerTests
     [InlineData("12345678901234567890")]
     [InlineData("1234567890123a")]
     [InlineData("1234-5678-9012-3456")]
+    [InlineData("41234124124124٢")]// Non AScii digit for 9
+    [InlineData("०१२३४५६१२३४५६७८९")]// Non AScii digit for 9
     public async Task Post_GivenInvalidCardNumber_ThenReturns400Rejected(string cardNumber)
     {
         var request = new PostPaymentRequest
@@ -46,6 +48,7 @@ public partial class PaymentsControllerTests
     [InlineData("13")]
     [InlineData("99")]
     [InlineData("ABC")]
+    [InlineData("٣")]
     public async Task Post_GivenInvalidExpiryMonth_ThenReturns400Rejected(string expiryMonth)
     {
         var request = new PostPaymentRequest
@@ -196,6 +199,7 @@ public partial class PaymentsControllerTests
     [InlineData("12345")]
     [InlineData("12a")]
     [InlineData("abc")]
+    [InlineData("۴۵۶")]
     public async Task Post_GivenInvalidCvv_ThenReturns400Rejected(string cvv)
     {
         var request = new PostPaymentRequest
