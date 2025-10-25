@@ -25,7 +25,7 @@ public class PaymentRequestValidator(TimeProvider timeProvider) : IPaymentReques
         if (string.IsNullOrWhiteSpace(cardNumber) ||
             cardNumber.Length < 14 ||
             cardNumber.Length > 19 ||
-            !cardNumber.All(char.IsDigit))
+            !cardNumber.All(char.IsAsciiDigit))
         {
             errors[nameof(PostPaymentRequest.CardNumber)] = new[] { "Card number must be 14-19 numeric characters" };
         }
@@ -95,7 +95,7 @@ public class PaymentRequestValidator(TimeProvider timeProvider) : IPaymentReques
             return;
         }
 
-        if ((cvv.Length != 3 && cvv.Length != 4) || !cvv.All(char.IsDigit))
+        if ((cvv.Length != 3 && cvv.Length != 4) || !cvv.All(char.IsAsciiDigit))
         {
             errors[nameof(PostPaymentRequest.Cvv)] = new[] { "CVV must be 3 or 4 digits" };
         }
