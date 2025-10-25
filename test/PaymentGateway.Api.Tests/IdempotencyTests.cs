@@ -47,7 +47,7 @@ public class IdempotencyTests
 
         // act 1: first call processes and persists
         var firstResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert first call
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
@@ -58,7 +58,7 @@ public class IdempotencyTests
 
         // act 2: same key + same payload → replay
         var secondResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert replay behavior
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
@@ -107,7 +107,7 @@ public class IdempotencyTests
 
         // act 1: first call processes and persists
         var firstResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert first call
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
@@ -118,7 +118,7 @@ public class IdempotencyTests
 
         // act 2: same key + same payload → replay
         var secondResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert replay behavior
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
@@ -263,12 +263,12 @@ public class IdempotencyTests
 
         httpClient.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
         var firstResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         httpClient.DefaultRequestHeaders.Remove("Idempotency-Key");
         httpClient.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
         var secondResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert both processed independently
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
@@ -307,13 +307,13 @@ public class IdempotencyTests
         httpClient1.DefaultRequestHeaders.Add("Merchant-Id", "merchant-1");
         httpClient1.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
         var firstResponse = await httpClient1.PostAsJsonAsync("/api/payments", paymentRequest);
-        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         var httpClient2 = webApplicationFactory.CreateClient();
         httpClient2.DefaultRequestHeaders.Add("Merchant-Id", "merchant-2");
         httpClient2.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
         var secondResponse = await httpClient2.PostAsJsonAsync("/api/payments", paymentRequest);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert both processed independently
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
@@ -362,13 +362,13 @@ public class IdempotencyTests
         httpClient1.DefaultRequestHeaders.Add("Merchant-Id", "merchant-1");
         httpClient1.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
         var firstResponse = await httpClient1.PostAsJsonAsync("/api/payments", paymentRequest1);
-        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var firstPaymentResult = await firstResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         var httpClient2 = webApplicationFactory.CreateClient();
         httpClient2.DefaultRequestHeaders.Add("Merchant-Id", "merchant-2");
         httpClient2.DefaultRequestHeaders.Add("Idempotency-Key", idempotencyKey);
         var secondResponse = await httpClient2.PostAsJsonAsync("/api/payments", paymentRequest2);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert both processed independently
         Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
@@ -503,7 +503,7 @@ public class IdempotencyTests
 
         // act 2: retry with same idempotency key and same request after bank failure
         var secondResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var secondPaymentResult = await secondResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert retry succeeds with same idempotency key
         Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
@@ -513,7 +513,7 @@ public class IdempotencyTests
 
         // act 3: third call with same key should replay successful response
         var thirdResponse = await httpClient.PostAsJsonAsync("/api/payments", paymentRequest);
-        var thirdPaymentResult = await thirdResponse.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var thirdPaymentResult = await thirdResponse.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // assert third call is a replay
         Assert.Equal(HttpStatusCode.OK, thirdResponse.StatusCode);

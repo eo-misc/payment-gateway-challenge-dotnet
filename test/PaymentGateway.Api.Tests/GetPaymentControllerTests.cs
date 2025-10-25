@@ -34,7 +34,7 @@ public class GetPaymentControllerTests : ApiTestsBase
 
         // Act
         var response = await client.GetAsync($"/api/payments/{paymentId}");
-        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
+        var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>(ApiFactory.JsonOptions);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
